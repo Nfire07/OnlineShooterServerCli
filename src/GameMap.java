@@ -174,11 +174,6 @@ public class GameMap {
 		return null;
 	}
 
-	/**
-	 * Restituisce la posizione di spawn in base al parametro isPlayer1.
-	 * @param isPlayer1 true per Player 1 (tile 4), false per Player 2 (tile 5)
-	 * @return array di due interi [x, y] rappresentanti la posizione di spawn
-	 */
 	public int[] getStartingPosition(boolean isPlayer1) {
 		if (mapIndex < 0 || mapIndex >= gameMaps.size()) {
 			return null;
@@ -191,7 +186,6 @@ public class GameMap {
 		int offsetX = (screenWidth - mapWidth) / 2;
 		int offsetY = (screenHeight - mapHeight) / 2;
 		
-		// Cerca il tile corretto: 4 per Player 1, 5 per Player 2
 		int targetTile = isPlayer1 ? 4 : 5;
 		
 		for (int row = 0; row < currentMap.length; row++) {
