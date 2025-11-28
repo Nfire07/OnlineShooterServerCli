@@ -173,53 +173,37 @@ public class GameMap {
 
 		return null;
 	}
-	
-	public static boolean player1Spawned = false;
-	public static boolean player2Spawned = false;
 
-	public int[] getStartingPosition() {
-	    if (mapIndex < 0 || mapIndex >= gameMaps.size()) {
-	        return null;
-	    }
+	/**
+	 * Restituisce la posizione di spawn in base al parametro isPlayer1.
+	 * @param isPlayer1 true per Player 1 (tile 4), false per Player 2 (tile 5)
+	 * @return array di due interi [x, y] rappresentanti la posizione di spawn
+	 */
+	public int[] getStartingPosition(boolean isPlayer1) {
+		if (mapIndex < 0 || mapIndex >= gameMaps.size()) {
+			return null;
+		}
 
-	    Integer[][] currentMap = gameMaps.get(mapIndex);
-	    
-	    int mapWidth = currentMap[0].length * tileSize;
-	    int mapHeight = currentMap.length * tileSize;
-	    int offsetX = (screenWidth - mapWidth) / 2;
-	    int offsetY = (screenHeight - mapHeight) / 2;
-	    if (!player1Spawned) {
-	        for (int row = 0; row < currentMap.length; row++) {
-	            for (int col = 0; col < currentMap[row].length; col++) {
-	                if (currentMap[row][col] == 4) {
-	                    player1Spawned = true;
-	                    int x = col * tileSize + tileSize/2 + offsetX;
-	                    int y = row * tileSize + tileSize/2 + offsetY;
-	                    return new int[] { x, y };
-	                }
-	            }
-	        }
-	    }
-	    if (!player2Spawned) {
-	        for (int row = 0; row < currentMap.length; row++) {
-	            for (int col = 0; col < currentMap[row].length; col++) {
-	                if (currentMap[row][col] == 5) {
-	                    player2Spawned = true;
-	                    int x = col * tileSize + tileSize/2 + offsetX;
-	                    int y = row * tileSize + tileSize/2 + offsetY;
-	                    return new int[] { x, y };
-	                }
-	            }
-	        }
-	    }
-	    
-	    return null;
+		Integer[][] currentMap = gameMaps.get(mapIndex);
+		
+		int mapWidth = currentMap[0].length * tileSize;
+		int mapHeight = currentMap.length * tileSize;
+		int offsetX = (screenWidth - mapWidth) / 2;
+		int offsetY = (screenHeight - mapHeight) / 2;
+		
+		// Cerca il tile corretto: 4 per Player 1, 5 per Player 2
+		int targetTile = isPlayer1 ? 4 : 5;
+		
+		for (int row = 0; row < currentMap.length; row++) {
+			for (int col = 0; col < currentMap[row].length; col++) {
+				if (currentMap[row][col] == targetTile) {
+					int x = col * tileSize + tileSize/2 + offsetX;
+					int y = row * tileSize + tileSize/2 + offsetY;
+					return new int[] { x, y };
+				}
+			}
+		}
+		
+		return null;
 	}
-
-	public void resetSpawnPositions() {
-	    player1Spawned = false;
-	    player2Spawned = false;
-	}
-	
-	
 }

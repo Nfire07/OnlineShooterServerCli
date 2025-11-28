@@ -202,39 +202,52 @@ class ShooterServer {
             try {
                 System.out.println("[Server:" + port + "] Waiting for clients...");
                 
+                // Client 1
                 client1 = serverSocket.accept();
                 writer1 = new PrintWriter(client1.getOutputStream(), true);
                 reader1 = new BufferedReader(new InputStreamReader(client1.getInputStream()));
                 String nickname1 = reader1.readLine();
                 System.out.println("[Server:" + port + "] Client 1 connected: " + nickname1);
+                
+                // Ricevi risoluzione Client 1
                 String screenSize1 = reader1.readLine();
                 String[] wh1 = screenSize1.split("x");
                 int width1 = Integer.parseInt(wh1[0]);
                 int height1 = Integer.parseInt(wh1[1]);
+                
+                // Crea GameMap per Client 1 e invia posizione Player 1
                 GameMap gameMap1 = new GameMap(map, width1, height1);
                 writer1.println("" + map);
-                int[] pos1 = gameMap1.getStartingPosition();
+                int[] pos1 = gameMap1.getStartingPosition(true); // Player 1 (tile 4)
                 writer1.println(pos1[0] + ";" + pos1[1]);
 
                 System.out.println("[Server:" + port + "] Waiting for second client...");
+                
+                // Client 2
                 client2 = serverSocket.accept();
                 writer2 = new PrintWriter(client2.getOutputStream(), true);
                 reader2 = new BufferedReader(new InputStreamReader(client2.getInputStream()));
                 String nickname2 = reader2.readLine();
                 System.out.println("[Server:" + port + "] Client 2 connected: " + nickname2);
+                
+                // Ricevi risoluzione Client 2
                 String screenSize2 = reader2.readLine();
                 String[] wh2 = screenSize2.split("x");
                 int width2 = Integer.parseInt(wh2[0]);
                 int height2 = Integer.parseInt(wh2[1]);
+                
+                // Crea GameMap per Client 2 e invia posizione Player 2
                 GameMap gameMap2 = new GameMap(map, width2, height2);
                 writer2.println("" + map);
-                int[] pos2 = gameMap2.getStartingPosition();
+                int[] pos2 = gameMap2.getStartingPosition(false); // Player 2 (tile 5)
                 writer2.println(pos2[0] + ";" + pos2[1]);
 
+                // Avvia il gioco
                 writer1.println("START");
                 writer2.println("START");
                 System.out.println("[Server:" + port + "] Game started! (" + nickname1 + " vs " + nickname2 + ")");
 
+                // Thread per scambio messaggi
                 Thread t1 = new Thread(() -> passMessages(reader1, writer2, nickname1));
                 Thread t2 = new Thread(() -> passMessages(reader2, writer1, nickname2));
 
