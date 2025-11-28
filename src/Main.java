@@ -1,4 +1,3 @@
-import java.awt.Dimension;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -193,11 +192,6 @@ class ShooterServer {
     private int map;
     private volatile boolean running = true;
     private Thread serverThread;
-    private Dimension scale1;
-    private Dimension scale2;
-    private String nickname1;
-    private String nickname2;
-    
 
     public ShooterServer(int port, int map) throws IOException {
         this.port = port;
@@ -212,7 +206,7 @@ class ShooterServer {
                 client1 = serverSocket.accept();
                 writer1 = new PrintWriter(client1.getOutputStream(), true);
                 reader1 = new BufferedReader(new InputStreamReader(client1.getInputStream()));
-                nickname1 = reader1.readLine();
+                String nickname1 = reader1.readLine();
                 System.out.println("[Server:" + port + "] Client 1 connected: " + nickname1);
                 
                 // Ricevi risoluzione Client 1
@@ -220,7 +214,6 @@ class ShooterServer {
                 String[] wh1 = screenSize1.split("x");
                 int width1 = Integer.parseInt(wh1[0]);
                 int height1 = Integer.parseInt(wh1[1]);
-                scale1 = new Dimension(width1,height1);
                 
                 // Crea GameMap per Client 1 e invia posizione Player 1
                 GameMap gameMap1 = new GameMap(map, width1, height1);
@@ -234,7 +227,7 @@ class ShooterServer {
                 client2 = serverSocket.accept();
                 writer2 = new PrintWriter(client2.getOutputStream(), true);
                 reader2 = new BufferedReader(new InputStreamReader(client2.getInputStream()));
-                nickname2 = reader2.readLine();
+                String nickname2 = reader2.readLine();
                 System.out.println("[Server:" + port + "] Client 2 connected: " + nickname2);
                 
                 // Ricevi risoluzione Client 2
@@ -242,7 +235,6 @@ class ShooterServer {
                 String[] wh2 = screenSize2.split("x");
                 int width2 = Integer.parseInt(wh2[0]);
                 int height2 = Integer.parseInt(wh2[1]);
-                scale2 = new Dimension(width2,height2);
                 
                 // Crea GameMap per Client 2 e invia posizione Player 2
                 GameMap gameMap2 = new GameMap(map, width2, height2);
@@ -296,47 +288,15 @@ class ShooterServer {
         try {
             String message;
             while ((message = reader.readLine()) != null && running) {
-                
-                try {
-                    String[] parts = message.split(";");
-                    if (parts[0].equals("XY")) {
-
-                        int x = Integer.parseInt(parts[1]);
-                        int y = Integer.parseInt(parts[2]);
-
-                        int[] scaled;
-
-                        if (clientName.equals(nickname1)) {
-                            scaled = scaleCoordinates(x, y, scale2, scale1);
-                        } else {
-                            scaled = scaleCoordinates(x, y, scale1, scale2);
-                        }
-
-                        String newMsg = "XY;" + scaled[0] + ";" + scaled[1];
-                        writer.println(newMsg);
-                        continue;
-                    }
-
-                } catch (Exception e) {
-                    System.err.println("[Server:" + port + "] Error scaling coordinates: " + e.getMessage());
-                }
                 writer.println(message);
             }
-
         } catch (IOException e) {
             if (running) {
                 System.out.println("[Server:" + port + "] " + clientName + " disconnected");
             }
-            running = false;
         }
     }
-    
-    private int[] scaleCoordinates(int x, int y, Dimension from, Dimension to) {
-        int newX = x * to.width / from.width;
-        int newY = y * to.height / from.height;
-        return new int[]{newX, newY};
-    }
-    
+
     public void stop() {
         running = false;
         try {
