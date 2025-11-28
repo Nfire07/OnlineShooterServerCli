@@ -307,9 +307,9 @@ class ShooterServer {
                         int[] scaled;
 
                         if (clientName.equals(nickname1)) {
-                            scaled = scaleCoordinates(x, y, scale1, scale2);
-                        } else {
                             scaled = scaleCoordinates(x, y, scale2, scale1);
+                        } else {
+                            scaled = scaleCoordinates(x, y, scale1, scale2);
                         }
 
                         String newMsg = "XY;" + scaled[0] + ";" + scaled[1];
